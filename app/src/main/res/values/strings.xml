@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MADPractical7_20012021017</string>
+    <string name="text1">Create Alarm Time</string>
+    <string name="text2">By pressing button, Alarm can be created and cancelled.</string>
+    <string name="text3">Check Current Time by looking below real digital clock.</string>
+    <string name="card2_str_1">Set Alarm time: </string>
+    <string name="button_text1">Create Alarm</string>
+    <string name="button_text2">Cancel Alarm</string>
+</resources>
