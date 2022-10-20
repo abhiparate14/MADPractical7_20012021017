@@ -13,12 +13,12 @@ class AlarmService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if(intent != null) {
             mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
-            mediaPlayer.start()
+            mediaPlayer?.start()
         }
         return START_STICKY
     }
     override fun onDestroy() {
-        mediaPlayer.stop()
+        mediaPlayer?.stop()
         super.onDestroy()
     }
 }

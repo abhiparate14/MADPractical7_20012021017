@@ -7,70 +7,74 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.TextClock
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.view.WindowCompat
 import com.example.madpractical7_20012021017.databinding.ActivityMainBinding
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
-    var mili:Long=0
+    var mili : Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        val createAlarmBtn = findViewById<AppCompatButton>(R.id.btn1)
+        val cancelAlarmBtn = findViewById<AppCompatButton>(R.id.btn2)
+        val cancelAlarmCardView = findViewById<MaterialCardView>(R.id.card2)
+        val textClock = findViewById<TextClock>(R.id.clock1)
+        val textView = findViewById<TextView>(R.id.card_2_text_2)
 
+        textClock.format12Hour = "hh:mm:ss a"
 
-        binding.clock1.format12Hour = "hh:mm:ss a"
+        cancelAlarmCardView.visibility = View.GONE
 
-        binding.card2.visibility= View.GONE
-
-        binding.btn1.setOnClickListener {
-            var cal: Calendar = Calendar.getInstance()
+        createAlarmBtn.setOnClickListener {
+            var cal : Calendar = Calendar.getInstance()
             var hour = cal.get(Calendar.HOUR_OF_DAY)
             var min = cal.get(Calendar.MINUTE)
-            val tpd = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener(function = {
-                    view, h, m ->
-                mili=getMillis(h,m)
-                setAlarm(getMillis(h,m),"Start")
-                binding.card2.visibility= View.VISIBLE
-                binding.card2Text2.text=h.toString()+":"+m.toString()
-            }),hour,min,false)
+            var tpd = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener(function = {view, h, m ->
+                mili = getMillis(h, m)
+                setAlarm(getMillis(h, m), "Start")
+                cancelAlarmCardView.visibility = View.VISIBLE
+                textView.text = h.toString()+":"+m.toString()
+            }), hour, min, false)
             tpd.show()
         }
 
-        binding.btn2.setOnClickListener{
+        cancelAlarmBtn.setOnClickListener {
             setAlarm(mili,"Stop")
-            binding.card2.visibility= View.GONE
+            cancelAlarmCardView.visibility = View.GONE
         }
     }
-    fun setAlarm(millisTime: Long, str: String)
-    {
+
+    private fun setAlarm(millisTime : Long, str : String){
         val intent = Intent(this, AlarmBroadCastReceiver::class.java)
-        intent.putExtra("Service1", str)
-        val pendingIntent =
-            PendingIntent.getBroadcast(applicationContext, 234324243, intent, 0)
+        intent.putExtra("Service1",str)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 234324243, intent, PendingIntent.FLAG_MUTABLE)
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        if(str == "Start") {
+        if(str == "Start"){
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 millisTime,
                 pendingIntent
             )
-        }else if(str == "Stop")
-        {
+        }
+        else if(str == "Stop"){
             alarmManager.cancel(pendingIntent)
             sendBroadcast(intent)
         }
     }
 
-    fun getMillis(hour:Int,min:Int):Long
-    {
-        val setcalendar = Calendar.getInstance()
-        setcalendar[Calendar.HOUR_OF_DAY] = hour
-        setcalendar[Calendar.MINUTE] = min
-        setcalendar[Calendar.SECOND] = 0
-        return setcalendar.timeInMillis
+    private fun getMillis(hour : Int, min : Int) : Long{
+        val setcal = Calendar.getInstance()
+        setcal[Calendar.HOUR_OF_DAY] = hour
+        setcal[Calendar.MINUTE] = min
+        setcal[Calendar.SECOND] = 0
+        return setcal.timeInMillis
     }
 }
